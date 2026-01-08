@@ -1,0 +1,16 @@
+{
+  "forbidden_claims": [
+    "best",
+    "guaranteed",
+    "100%",
+    "always",
+    "never",
+    "perfect"
+  ],
+  "warning_claims": [
+    "leading",
+    "top",
+    "premium"
+  ]
+}
+

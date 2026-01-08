@@ -1,0 +1,4 @@
+product_id,type,name,description,category,features,target_audience,language
+PROD-001,product,Smart Widget,Advanced widget with AI capabilities for businesses. Streamline your workflow with intelligent automation and real-time insights.,Technology,"AI-powered,Cloud sync,Real-time analytics,Secure encryption",B2B,en
+PROD-002,service,Cloud Migration Service,Professional cloud migration services to help businesses move to the cloud seamlessly. Expert consultation and implementation support.,IT Services,"Expert consultation,Seamless migration,24/7 support,Cost optimization",B2B,en
+
