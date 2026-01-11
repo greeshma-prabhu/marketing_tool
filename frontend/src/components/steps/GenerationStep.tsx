@@ -372,7 +372,8 @@ export default function GenerationStep() {
                         }
                         
                         // CRITICAL: Use the variant's template, not the selected template
-                        const finalTemplateId = variant.template || state.selectedTemplate
+                        // Ensure finalTemplateId is always a string (never null/undefined)
+                        const finalTemplateId: string = variant.template || state.selectedTemplate || 'ThreePanelVertical'
                         console.log(`✅ Using template ID for variant ${variant.id}:`, finalTemplateId)
                         
                         return (

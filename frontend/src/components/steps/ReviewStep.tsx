@@ -288,7 +288,8 @@ export default function ReviewStep() {
           }}
         >
           {(() => {
-            const templateId = state.selectedVariant.template || state.selectedTemplate
+            // Ensure templateId is always a string (never null/undefined)
+            const templateId: string = state.selectedVariant.template || state.selectedTemplate || 'ThreePanelVertical'
             console.log('📄 ReviewStep rendering with template:', {
               variantTemplate: state.selectedVariant.template,
               selectedTemplate: state.selectedTemplate,
