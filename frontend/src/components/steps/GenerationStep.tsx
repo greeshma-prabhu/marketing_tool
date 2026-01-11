@@ -208,6 +208,9 @@ export default function GenerationStep() {
     const cleanTemplateId = selectedTemplateId.trim()
     console.log('✅ Using clean template ID:', cleanTemplateId)
 
+    // Create cache key for fallback variants
+    const cacheKey = `variants-${cleanTemplateId}-${productName}`
+
     const variants: Variant[] = [
       {
         id: 'variant-A',
