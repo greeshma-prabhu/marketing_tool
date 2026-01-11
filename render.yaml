@@ -2,14 +2,14 @@ services:
   - type: web
     name: onepager-generator
     env: node
-    buildCommand: cd frontend && npm install && npm run build
-    startCommand: cd frontend && npm start
+    buildCommand: npm run build
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
         value: 10000
-      - key: NEXT_PUBLIC_API_URL
+      - key: NEXT_PUBLIC_API_BASE_URL
         value: https://your-api-url.onrender.com
     healthCheckPath: /
 
