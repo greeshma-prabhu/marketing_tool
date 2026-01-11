@@ -32,47 +32,71 @@ export default function CSVUploadTab() {
               return
             }
 
-            // Use first row for product data
-            const row = rows[0]
-            const productData: ProductData = {
-              productName: row.productName || row.product_name || row.name || '',
-              description: row.description || row.desc || '',
-              features: [
-                row.feature1 || row.feature_1,
-                row.feature2 || row.feature_2,
-                row.feature3 || row.feature_3,
-                row.feature4 || row.feature_4,
-                row.feature5 || row.feature_5,
-                row.feature6 || row.feature_6,
-              ].filter(Boolean),
-              imageUrl: row.imageUrl || row.image_url || row.image,
-              logoUrl: row.logoUrl || row.logo_url || row.logo,
-              website: row.website || row.url,
-              email: row.email,
-              phone: row.phone || row.telephone,
-              socialMedia: {
-                facebook: row.facebook || row.fb,
-                twitter: row.twitter || row.x,
-                linkedin: row.linkedin,
-                instagram: row.instagram || row.ig,
-              },
-              campaignMessage: row.campaignMessage || row.campaign_message || row.message,
-              cta: row.cta || row.call_to_action,
-            }
+            // Process all rows for bulk generation
+            const products: ProductData[] = rows.map((row: any) => {
+              // Helper to convert image path/URL to base64 if needed
+              const processImage = async (imagePath: string | undefined): Promise<string | undefined> => {
+                if (!imagePath) return undefined
+                // If it's a URL, return as-is
+                if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+                  return imagePath
+                }
+                // If it's a local path, try to read as base64 (for future file system access)
+                // For now, return URL if it looks like one
+                return imagePath
+              }
 
-            if (!productData.productName || !productData.description) {
-              setError('CSV must contain productName and description columns')
+              return {
+                productName: row.productName || row.product_name || row.name || '',
+                description: row.description || row.desc || '',
+                features: [
+                  row.feature1 || row.feature_1,
+                  row.feature2 || row.feature_2,
+                  row.feature3 || row.feature_3,
+                  row.feature4 || row.feature_4,
+                  row.feature5 || row.feature_5,
+                  row.feature6 || row.feature_6,
+                ].filter(Boolean),
+                imageUrl: row.imageUrl || row.image_url || row.image || row.imagePath || row.image_path,
+                imageFile: row.imageFile || row.image_file, // base64 if provided
+                logoUrl: row.logoUrl || row.logo_url || row.logo || row.logoPath || row.logo_path,
+                logoFile: row.logoFile || row.logo_file, // base64 if provided
+                website: row.website || row.url,
+                email: row.email,
+                phone: row.phone || row.telephone,
+                socialMedia: {
+                  facebook: row.facebook || row.fb,
+                  twitter: row.twitter || row.x,
+                  linkedin: row.linkedin,
+                  instagram: row.instagram || row.ig,
+                },
+                campaignMessage: row.campaignMessage || row.campaign_message || row.message,
+                cta: row.cta || row.call_to_action,
+              }
+            }).filter(p => p.productName) // Only include rows with product names
+
+            if (products.length === 0) {
+              setError('CSV must contain at least one row with a productName column')
               setLoading(false)
               return
             }
 
-            setProductData(productData)
+            // If multiple products, save all to localStorage for bulk processing
+            if (products.length > 1) {
+              const existingBulk = JSON.parse(localStorage.getItem('bulkProducts') || '[]')
+              const updatedBulk = [...existingBulk, ...products]
+              localStorage.setItem('bulkProducts', JSON.stringify(updatedBulk))
+              setError(`Loaded ${products.length} products. Use first product for current workflow.`)
+            }
+
+            // Use first product for current workflow
+            setProductData(products[0])
           } catch (err: any) {
             setError(err.message || 'Failed to parse CSV data')
             setLoading(false)
           }
         },
-        error: (err) => {
+        error: (err: Error) => {
           setError(err.message || 'Failed to parse CSV file')
           setLoading(false)
         },
@@ -93,8 +117,9 @@ export default function CSVUploadTab() {
   })
 
   const downloadSample = () => {
-    const sample = `productName,description,feature1,feature2,feature3,feature4,imageUrl,logoUrl,website,email,phone,facebook,twitter,linkedin,instagram,campaignMessage,cta
-My Product,This is an amazing product that solves real problems,Feature 1,Feature 2,Feature 3,Feature 4,https://example.com/image.jpg,https://example.com/logo.png,https://example.com,contact@example.com,+1-555-1234,https://facebook.com/example,https://twitter.com/example,https://linkedin.com/company/example,https://instagram.com/example,Join us today!,Get Started`
+    const sample = `productName,description,feature1,feature2,feature3,feature4,imageUrl,imagePath,logoUrl,logoPath,website,email,phone,facebook,twitter,linkedin,instagram,campaignMessage,cta
+My Product,This is an amazing product that solves real problems,Feature 1,Feature 2,Feature 3,Feature 4,https://example.com/image.jpg,./images/product1.jpg,https://example.com/logo.png,./logos/logo1.png,https://example.com,contact@example.com,+1-555-1234,https://facebook.com/example,https://twitter.com/example,https://linkedin.com/company/example,https://instagram.com/example,Join us today!,Get Started
+Another Product,Another great product description,Feature A,Feature B,Feature C,Feature D,https://example.com/image2.jpg,./images/product2.jpg,https://example.com/logo2.png,./logos/logo2.png,https://example2.com,contact2@example.com,+1-555-5678,https://facebook.com/example2,https://twitter.com/example2,https://linkedin.com/company/example2,https://instagram.com/example2,Join us!,Start Now`
     
     const blob = new Blob([sample], { type: 'text/csv' })
     const url = URL.createObjectURL(blob)

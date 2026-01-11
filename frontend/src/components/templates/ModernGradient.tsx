@@ -3,6 +3,8 @@
 import { ProductData, Variant } from '@/contexts/OnepagerContext'
 import { formatDescription, formatFeature } from '@/utils/textUtils'
 import { getFeatureIcon } from '@/utils/iconUtils'
+import { getImageSource, getLogoSource, getLanguageFont } from '@/utils/templateHelpers'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 interface Props {
   data: ProductData
@@ -10,15 +12,19 @@ interface Props {
 }
 
 export function ModernGradient({ data, variant }: Props) {
+  const { t, language } = useLanguage()
   const features = (data.features || []).slice(0, 4)
   const description = formatDescription(data.description || '', 200)
+  const imageSource = getImageSource(data)
+  const logoSource = getLogoSource(data)
+  const fontFamily = getLanguageFont(language)
 
   return (
-    <div style={{ width: '210mm', height: '297mm', fontFamily: 'Inter, sans-serif' }} className="bg-white">
+    <div style={{ width: '210mm', height: '297mm', fontFamily }} className="bg-white">
       {/* Top Section - Gradient */}
       <div className="h-[120mm] bg-gradient-to-r from-pink-500 to-purple-500 flex flex-col items-center justify-center p-8">
         <h1 className="text-6xl font-bold text-white mb-4 text-center" style={{ wordBreak: 'break-word' }}>
-          {data.productName || 'Product Name'}
+          {data.productName || t('template.productName')}
         </h1>
         <p className="text-xl text-white text-center">{variant?.tagline || description}</p>
       </div>

@@ -5,6 +5,8 @@ import { OnepagerProvider } from '@/contexts/OnepagerContext'
 import { LanguageProvider } from '@/contexts/LanguageContext'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { SidebarProvider } from '@/contexts/SidebarContext'
+import { ToastProvider } from '@/contexts/ToastContext'
+import KeyboardShortcuts from '@/components/KeyboardShortcuts'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -24,9 +26,12 @@ export default function RootLayout({
         <AuthProvider>
           <LanguageProvider>
             <SidebarProvider>
-              <OnepagerProvider>
-                {children}
-              </OnepagerProvider>
+              <ToastProvider>
+                <OnepagerProvider>
+                  <KeyboardShortcuts />
+                  {children}
+                </OnepagerProvider>
+              </ToastProvider>
             </SidebarProvider>
           </LanguageProvider>
         </AuthProvider>

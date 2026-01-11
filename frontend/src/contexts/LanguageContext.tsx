@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 
-type Language = 'en' | 'zh' | 'nl'
+export type Language = 'en' | 'zh' | 'nl'
 
 interface LanguageContextType {
   language: Language
@@ -161,6 +161,12 @@ const translations: Record<Language, Record<string, string>> = {
     'template.learnMore': 'Learn More',
     'template.whatWeOffer': 'What We Offer',
     'template.getCreative': 'Get Creative',
+    'template.getStarted': 'Get Started Today!',
+    'template.features': 'Features',
+    'template.clients': 'Clients',
+    'template.contactUs': 'Contact us today!',
+    'template.joinUs': 'Join Us',
+    'template.bePartOf': 'Be part of something great',
   },
   zh: {
     // App & Sidebar
@@ -309,6 +315,12 @@ const translations: Record<Language, Record<string, string>> = {
     'template.learnMore': '了解更多',
     'template.whatWeOffer': '我们提供的服务',
     'template.getCreative': '发挥创意',
+    'template.getStarted': '立即开始！',
+    'template.features': '功能特点',
+    'template.clients': '客户',
+    'template.contactUs': '今天就联系我们！',
+    'template.joinUs': '加入我们',
+    'template.bePartOf': '成为伟大事业的一部分',
   },
   nl: {
     // App & Sidebar
@@ -457,6 +469,12 @@ const translations: Record<Language, Record<string, string>> = {
     'template.learnMore': 'Meer Weten',
     'template.whatWeOffer': 'Wat We Bieden',
     'template.getCreative': 'Word Creatief',
+    'template.getStarted': 'Begin Vandaag!',
+    'template.features': 'Functies',
+    'template.clients': 'Klanten',
+    'template.contactUs': 'Neem vandaag contact met ons op!',
+    'template.joinUs': 'Doe Mee',
+    'template.bePartOf': 'Maak deel uit van iets groots',
   },
 }
 

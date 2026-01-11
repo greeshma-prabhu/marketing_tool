@@ -36,12 +36,26 @@ export default function WebsiteScraperTab() {
 
       const data = await response.json()
       
+      // Process images - convert to base64 if provided as base64, otherwise use URL
+      const processImage = (img: string | undefined): { url?: string; file?: string } => {
+        if (!img) return {}
+        if (img.startsWith('data:image')) {
+          return { file: img } // Already base64
+        }
+        return { url: img } // URL
+      }
+
+      const imageData = processImage(data.imageUrl || data.image || data.imageFile)
+      const logoData = processImage(data.logoUrl || data.logo || data.logoFile)
+      
       const productData: ProductData = {
         productName: data.productName || data.name || '',
         description: data.description || '',
         features: data.features || [],
-        imageUrl: data.imageUrl || data.image,
-        logoUrl: data.logoUrl || data.logo,
+        imageUrl: imageData.url,
+        imageFile: imageData.file,
+        logoUrl: logoData.url,
+        logoFile: logoData.file,
         website: url,
         email: data.email,
         phone: data.phone,
@@ -50,8 +64,8 @@ export default function WebsiteScraperTab() {
         cta: data.cta,
       }
 
-      if (!productData.productName || !productData.description) {
-        setError('Could not extract enough information from the website. Please try manual input.')
+      if (!productData.productName) {
+        setError('Could not extract product name from the website. Please try manual input.')
         setLoading(false)
         return
       }

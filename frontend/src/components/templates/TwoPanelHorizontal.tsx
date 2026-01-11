@@ -3,6 +3,8 @@
 import { ProductData, Variant } from '@/contexts/OnepagerContext'
 import { formatDescription, formatFeature } from '@/utils/textUtils'
 import { getFeatureIcon } from '@/utils/iconUtils'
+import { getImageSource, getLogoSource, getLanguageFont } from '@/utils/templateHelpers'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 interface Props {
   data: ProductData
@@ -10,15 +12,19 @@ interface Props {
 }
 
 export function TwoPanelHorizontal({ data, variant }: Props) {
+  const { t, language } = useLanguage()
   const features = (data.features || []).slice(0, 4)
   const description = formatDescription(data.description || '', 200)
+  const imageSource = getImageSource(data)
+  const logoSource = getLogoSource(data)
+  const fontFamily = getLanguageFont(language)
 
   return (
-    <div style={{ width: '210mm', height: '297mm', fontFamily: 'Inter, sans-serif' }} className="bg-white flex flex-col">
+    <div style={{ width: '210mm', height: '297mm', fontFamily }} className="bg-white flex flex-col overflow-hidden">
       {/* Top Panel - Blue */}
-      <div className="h-1/2 bg-indigo-600 flex flex-col items-center justify-center p-8 text-white">
-        <h1 className="text-5xl font-bold mb-6 text-center" style={{ wordBreak: 'break-word' }}>
-          {data.productName || 'Product Name'}
+      <div className="h-1/2 bg-indigo-600 flex flex-col items-center justify-center p-8 text-white overflow-hidden">
+        <h1 className="text-5xl font-bold mb-6 text-center px-4" style={{ wordBreak: 'break-word', maxHeight: '120px', overflow: 'hidden' }}>
+          {data.productName || t('template.productName')}
         </h1>
         <div className="flex gap-4">
           {features.slice(0, 4).map((_, i) => {
@@ -29,21 +35,21 @@ export function TwoPanelHorizontal({ data, variant }: Props) {
       </div>
 
       {/* Bottom Panel - White */}
-      <div className="h-1/2 bg-white p-8 flex flex-col justify-center">
-        <h2 className="text-3xl font-bold text-black mb-4">{variant?.headline || 'Features'}</h2>
-        <p className="text-base text-gray-700 mb-6" style={{ wordBreak: 'break-word' }}>{description}</p>
-        <ul className="space-y-2 mb-6">
+      <div className="h-1/2 bg-white p-8 flex flex-col justify-center overflow-hidden">
+        <h2 className="text-3xl font-bold text-black mb-4">{variant?.headline || t('template.features')}</h2>
+        <p className="text-base text-gray-700 mb-6 line-clamp-3" style={{ wordBreak: 'break-word' }}>{description}</p>
+        <ul className="space-y-2 mb-6 overflow-y-auto max-h-[150px]">
           {features.map((feature, i) => (
             <li key={i} className="flex items-start">
-              <span className="text-indigo-600 mr-2">•</span>
-              <span className="text-sm text-gray-700" style={{ wordBreak: 'break-word' }}>
+              <span className="text-indigo-600 mr-2 flex-shrink-0">•</span>
+              <span className="text-sm text-gray-700 flex-1" style={{ wordBreak: 'break-word' }}>
                 {formatFeature(feature, 60)}
               </span>
             </li>
           ))}
         </ul>
         <button className="bg-indigo-600 text-white px-8 py-3 rounded-lg font-semibold w-fit">
-          {data.cta || 'Learn More'}
+          {data.cta || t('template.learnMore')}
         </button>
       </div>
     </div>

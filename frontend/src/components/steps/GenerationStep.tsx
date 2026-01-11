@@ -8,6 +8,8 @@ import TemplateRenderer from '../templates/TemplateRenderer'
 import { posterMyWallService } from '@/services/postermywall'
 import { API_BASE_URL } from '@/config/api'
 import { FALLBACK_TEMPLATE_IDS } from '@/services/postermywall'
+import { cache } from '@/utils/cache'
+import LoadingSpinner from '@/components/LoadingSpinner'
 
 export default function GenerationStep() {
   const { state, setVariants, setSelectedVariant, setCurrentStep, addVersion } = useOnepager()
@@ -77,6 +79,17 @@ export default function GenerationStep() {
       return
     }
 
+    // Check cache first
+    const cacheKey = `variants-${state.selectedTemplate}-${state.productData.productName}`
+    const cachedVariants = cache.get<Variant[]>(cacheKey)
+    if (cachedVariants) {
+      console.log('✅ Using cached variants')
+      setLocalVariants(cachedVariants)
+      setVariants(cachedVariants)
+      setLoading(false)
+      return
+    }
+
     try {
       setLoading(true)
       const productData = state.productData
@@ -135,6 +148,8 @@ export default function GenerationStep() {
           const validVariants = generatedVariants.filter(v => v !== null) as Variant[]
 
           if (validVariants.length > 0) {
+            // Cache the variants
+            cache.set(cacheKey, validVariants, 10 * 60 * 1000) // 10 minutes
             setLocalVariants(validVariants)
             setVariants(validVariants)
             addVersion(validVariants)
@@ -223,6 +238,9 @@ export default function GenerationStep() {
       },
     ]
 
+    // Cache the fallback variants
+    cache.set(cacheKey, variants, 10 * 60 * 1000) // 10 minutes
+    
     console.log('✅ Generated fallback variants:', {
       count: variants.length,
       selectedTemplate: cleanTemplateId,

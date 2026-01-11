@@ -1,6 +1,8 @@
 'use client'
 
 import { ProductData, Variant } from '@/contexts/OnepagerContext'
+import { lazy, Suspense } from 'react'
+import LoadingSpinner from '@/components/LoadingSpinner'
 import { ThreePanelVertical } from './ThreePanelVertical'
 import { ModernGradient } from './ModernGradient'
 import { VibrantOrange } from './VibrantOrange'

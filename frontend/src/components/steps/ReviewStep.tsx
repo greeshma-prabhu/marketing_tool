@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useOnepager } from '@/contexts/OnepagerContext'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { useToast } from '@/contexts/ToastContext'
 import BackButton from '@/components/BackButton'
 import TemplateRenderer from '../templates/TemplateRenderer'
 import { posterMyWallService } from '@/services/postermywall'
@@ -15,6 +16,7 @@ import { Download, CheckCircle, Save, FileDown, Image as ImageIcon } from 'lucid
 export default function ReviewStep() {
   const { state, setCurrentStep, reset, startNewOnepager } = useOnepager()
   const { t, language } = useLanguage()
+  const { showToast } = useToast()
   const router = useRouter()
   const [downloading, setDownloading] = useState(false)
   const [downloadSuccess, setDownloadSuccess] = useState(false)
@@ -103,9 +105,10 @@ export default function ReviewStep() {
       pdf.save(`${state.productData?.productName || 'onepager'}-onepager-${format.toUpperCase()}.pdf`)
 
       setDownloadSuccess(true)
+      showToast(t('reviewPage.downloadSuccess'), 'success')
     } catch (error: any) {
       console.error('Download failed:', error)
-      alert(t('common.error'))
+      showToast(t('common.error'), 'error')
     } finally {
       setDownloading(false)
     }
@@ -156,9 +159,12 @@ export default function ReviewStep() {
       })
 
       setSaveSuccess(true)
+      showToast(t('reviewPage.saveSuccess'), 'success')
     } catch (error: any) {
       console.error('Save failed:', error)
-      setSaveError(error.message || t('reviewPage.saveError'))
+      const errorMsg = error.message || t('reviewPage.saveError')
+      setSaveError(errorMsg)
+      showToast(errorMsg, 'error')
     } finally {
       setSaving(false)
     }
